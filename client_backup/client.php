@@ -8,5 +8,3 @@ $secret_key = $config['secret'];
 if (!empty($_POST) && $_POST['secret'] === $config['secret']) { // protection
     WpBackup::init($config, $_POST);
 }
-
-

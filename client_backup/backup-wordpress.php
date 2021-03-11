@@ -24,7 +24,7 @@ class WpBackup {
         self::$dir_from = rtrim($dir_from, '/');
         self::$dir_to_backup = rtrim($dir_to_backup, '/') . '/' . $backup_id;
 
-        self::$host_backup = $config_server['host_backup']; //'backup.d3.1si.fr'; // host du serveur backup
+        self::$host_backup = $config_server['host_backup']; // host du serveur backup
         self::$host_backup_user = $config_server['host_backup_user']; // acces sur le serveur de backup
         self::$host_backup_pass = $config_server['host_backup_pass']; // acces sur le serveur de backup
         self::$host_backup_dir = $config_server['host_backup_dir']; // repertoire sur le serveur de backup
