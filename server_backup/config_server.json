@@ -1,0 +1,6 @@
+{
+    "host_backup": "", 
+    "host_backup_user": "", 
+    "host_backup_pass": "", 
+    "host_backup_dir": "/private/"     
+}
