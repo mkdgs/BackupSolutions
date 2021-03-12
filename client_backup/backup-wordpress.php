@@ -9,6 +9,7 @@ class WpBackup {
     protected static $dir_to_backup;
     protected static $backup_date;
     protected static $backup_id;
+    protected static $transfert_mode = null;
     protected static $host_backup = ''; // host du serveur backup
     protected static $host_backup_user = ''; // acces sur le serveur de backup
     protected static $host_backup_pass = ''; // acces sur le serveur de backup
@@ -17,12 +18,12 @@ class WpBackup {
     public static function init($config_client, $config_server) {
         $dir_from = $config_client['dir_from'];
         $dir_to_backup = $config_client['dir_to_backup'];
-        $backup_id = $config_client['backup_id'];
-        $backup_date = $config_client['backup_date'];
-        self::$backup_id = $backup_id;
-        self::$backup_date = (empty($backup_date)) ? date('Y-m-d_H-i-s') : $backup_date;
+
+        self::$transfert_mode = ( empty($config_server['transfert_mode']) ) $config_client['transfert_mode'] : $config_server['transfert_mode'];
+        self::$backup_id = $config_client['backup_id'];
+        self::$backup_date = (empty($config_server['backup_date'])) ? date('Y-m-d_H-i-s') : $config_server['backup_date'];
         self::$dir_from = rtrim($dir_from, '/');
-        self::$dir_to_backup = rtrim($dir_to_backup, '/') . '/' . $backup_id;
+        self::$dir_to_backup = rtrim($dir_to_backup, '/') . '/' . self::$backup_id;
 
         self::$host_backup = $config_server['host_backup']; // host du serveur backup
         self::$host_backup_user = $config_server['host_backup_user']; // acces sur le serveur de backup
@@ -77,7 +78,6 @@ class WpBackup {
             //if(filesize($dump_file.'.zip') < 5 ) { // moins de 5 octets, c'est très suspect
             //  throw new Exception('mysql dump archive seems empty:'.$dump_file.'.zip');
             //}
-            
             // backup all file
             $file_backup_zip = self::$dir_to_backup . '/' . self::$backup_id . '-' . self::$backup_date . '.zip';
             //system('cp -R '.$dir_from.' '.$dir_to_backup);
@@ -94,10 +94,20 @@ class WpBackup {
                 self::$dir_to_backup . '/log.txt'
             ];
 
-            self::transfert('ftp', $files);
+            // @todo: select the transfert mode
+            if (self::$transfert_mode) {
+                self::transfert('ftp', $files);
+                self::$keep_file = false;
+            } else {
+                self::$keep_file = true;
+            }
 
-            unlink($dump_file);
-            unlink($file_backup_zip);
+            if (!self::$keep_file) {
+                foreach ($files as $file) {
+                    unlink($file);
+                }
+                //rmdir(self::$dir_to_backup);
+            }
         } catch (ErrorException $e) {
             self::log($e->getMessage() . ' on line ' . $e->getLine());
         }
@@ -112,8 +122,8 @@ class WpBackup {
 
         // Vérification de la connexion
         if ((!$conn_id) || (!$login_result)) {
-             throw new ErrorException('Ftp connexion failed ' . self::$host_backup);
-        } 
+            throw new ErrorException('Ftp connexion failed ' . self::$host_backup);
+        }
 
         // création du rep si besoin
         if (ftp_nlist($conn_id, $remote_path) == false) {

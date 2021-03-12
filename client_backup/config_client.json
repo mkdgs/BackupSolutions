@@ -1,7 +1,10 @@
 
 {
+    "secret_key" : "secret_key"
+    
     "dir_from": "",
     "dir_to_backup": "",
     "backup_id": "",
     "backup_date": "",
+    "transfert_mode": ""
 } 
