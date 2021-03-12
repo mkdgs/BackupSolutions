@@ -1,6 +1,14 @@
 **BRAINSTORM**
 ==========
 
+**problématique**
+Sauvegarde d'un nombre important de sites et applications web sur des structures hétéroclites
+- le shell ssh n'est pas toujours disponible
+- cron parfois peu fiable, ou très limité
+- automatisation de la mise en place du backup
+- possibilité de monitorer l'ensemble des backups de manière centralisée
+
+
 **V0.0**
 - POC
 
