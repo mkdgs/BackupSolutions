@@ -5,14 +5,14 @@ ini_set('display_errors', '1');
 
 class WpBackup {
 
-    public static $dir_from;
-    public static $dir_to_backup;
-    public static $backup_date;
-    public static $backup_id;
-    public static $host_backup = ''; // host du serveur backup
-    public static $host_backup_user = ''; // acces sur le serveur de backup
-    public static $host_backup_pass = ''; // acces sur le serveur de backup
-    public static $host_backup_dir = ''; // repertoire sur le serveur de backup
+    protected static $dir_from;
+    protected static $dir_to_backup;
+    protected static $backup_date;
+    protected static $backup_id;
+    protected static $host_backup = ''; // host du serveur backup
+    protected static $host_backup_user = ''; // acces sur le serveur de backup
+    protected static $host_backup_pass = ''; // acces sur le serveur de backup
+    protected static $host_backup_dir = ''; // repertoire sur le serveur de backup
 
     public static function init($config_client, $config_server) {
         $dir_from = $config_client['dir_from'];
@@ -103,7 +103,7 @@ class WpBackup {
         }
     }
 
-    public static function transfert($mode, $files) {
+    protected static function transfert($mode, $files) {
         $remote_path = self::$backup_id . '/' . self::$backup_id . '/';
         $conn_id = ftp_connect(self::$host_backup);
 
@@ -112,17 +112,15 @@ class WpBackup {
 
         // Vérification de la connexion
         if ((!$conn_id) || (!$login_result)) {
-            echo "La connexion FTP a échoué !";
-            exit;
-        } else {
-            echo "Connexion au serveur";
-        }
+             throw new ErrorException('Ftp connexion failed ' . self::$host_backup);
+        } 
 
+        // création du rep si besoin
         if (ftp_nlist($conn_id, $remote_path) == false) {
             ftp_mkdir($conn_id, $remote_path);
         }
 
-        // Chargement d'un fichier
+        // Chargement des fichiers
         foreach ($files as $source_file) {
             $destination_file = $remote_path . basename($source_file);
             $upload = ftp_put($conn_id, $destination_file, $source_file, FTP_BINARY);
@@ -138,7 +136,7 @@ class WpBackup {
         ftp_close($conn_id);
     }
 
-    public static function transfertRsync($mode) {
+    protected static function transfertRsync($mode) {
         echo 'rsync start' . "<br>\r\n";
         $remote_path = self::$backup_id . '/' . self::$backup_id . '/';
         //ob_start();
@@ -155,7 +153,7 @@ class WpBackup {
         //ob_end_clean();
     }
 
-    public static function log($message) {
+    protected static function log($message) {
         $m = $message . "\r\n";
         echo $m . "<br>";
         file_put_contents(self::$dir_to_backup . '/log.txt', $m, FILE_APPEND);

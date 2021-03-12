@@ -1,6 +1,9 @@
 **BRAINSTORM**
 ==========
 
+**V0.0**
+- POC
+
 
 **IMPLEMENTATION**
 -------------
@@ -35,6 +38,7 @@
     - tableau de bord, monitoring, liste des backup
 
 *Bookmarks*
+- https://phpbu.de/
 - https://github.com/brianreese/backup-google-drive-php
 - https://stackoverflow.com/questions/46828881/backup-files-to-google-drive-using-php
 - https://rclone.org/
